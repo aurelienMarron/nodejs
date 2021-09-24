@@ -92,7 +92,22 @@ app.delete('/listes/:id', async(req,res)=>{
 app.post('/listes/:id/films', async (req,res)=>{
     try{
         let liste=await db.get(req.params.id)
-        db.put(req.params.id,liste.films.concat(req.body.film_id))
+        liste.films.push(req.body.film_id)
+        db.put(req.params.id,liste)
+        console.log(liste)
+        res.status(200).json(liste)
+    }
+    catch(err){
+        res.status(404).end()
+    }
+})
+
+app.delete('/listes/:id/films', async (req,res)=>{
+    try{
+        let liste=await db.get(req.params.id)
+        let index=liste.films.indexOf(film_id)
+        liste.films.splice(index,1)
+        db.put(req.params.id,liste)
         console.log(liste)
         res.status(200).json(liste)
     }
