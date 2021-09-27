@@ -102,10 +102,10 @@ app.post('/listes/:id/films', async (req,res)=>{
     }
 })
 
-app.delete('/listes/:id/films', async (req,res)=>{
+app.delete('/listes/:id/films/:filmId', async (req,res)=>{
     try{
         let liste=await db.get(req.params.id)
-        let index=liste.films.indexOf(film_id)
+        let index=liste.films.indexOf(req.params.filmId)
         liste.films.splice(index,1)
         db.put(req.params.id,liste)
         console.log(liste)
