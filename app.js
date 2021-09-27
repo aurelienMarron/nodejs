@@ -39,7 +39,7 @@ app.post('/movies', async (req, res) => {
 //display a movie
 app.get('/movies/:movie_id', async (req, res) => {
     try {
-        let movie = await db.get(req.params.movie_id)
+        let movie = await db.get(parseInt(req.params.movie_id))
         console.log(movie)
         res.status(200).json(movie)
     } catch (err) {
