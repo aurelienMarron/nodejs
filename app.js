@@ -28,6 +28,9 @@ app.listen(port, () => {
 //Ajouter un movie
 app.post('/movies', async (req, res) => {
     let objetFilm = req.body
+    if (req.body.movie_id===undefined){
+        res.status(400).json("Merci de renseigner un id")
+    }
     await db.put(objetFilm.id_movie, objetFilm)
     console.log(objetFilm.id_movie + objetFilm)
     res.status(200).json(objetFilm)
@@ -90,7 +93,7 @@ app.delete('/listes/:list_id', async (req, res) => {
 })
 
 // add a movie to a list
-app.post('/listes/:list_id/add', async (req, res) => {
+app.post('/listes/:list_id/movies_list', async (req, res) => {
     try {
         let liste = await db.get(req.params.list_id)
         liste.films.push(req.body.film_id)
@@ -103,7 +106,7 @@ app.post('/listes/:list_id/add', async (req, res) => {
 })
 
 //delete a movie to a list
-app.delete('/listes/:list_id/delete/:film_id', async (req, res) => {
+app.delete('/listes/:list_id/movies_list/:film_id', async (req, res) => {
     try {
         let liste = await db.get(req.params.list_id)
         let index = liste.films.indexOf(parseInt(req.params.film_id))
