@@ -1,10 +1,8 @@
-
-
 const express = require('express')
 const app = express()
-const port = (parseInt(process.env.PORT||'3000',10))
+const port = (parseInt(process.env.PORT || '3000', 10))
 const level = require('level')
-const db = level('./db', { valueEncoding: 'json' })
+const db = level('./db', {valueEncoding: 'json'})
 
 app.use(express.json())
 app.use(express.static('public'))
@@ -27,105 +25,93 @@ app.listen(port, () => {
 })
 
 //Routes des movies
-
-app.post('/movies',async (req,res)=>{
-    let objetFilm=req.body
-     await db.put(objetFilm.id,objetFilm)
-        console.log(objetFilm.id + objetFilm)
+//Ajouter un movie
+app.post('/movies', async (req, res) => {
+    let objetFilm = req.body
+    await db.put(objetFilm.id_movie, objetFilm)
+    console.log(objetFilm.id_movie + objetFilm)
     res.status(200).json(objetFilm)
 })
 
-app.get('/movies/:id', async (req,res)=>{
-    try{
-        let movie=await db.get(req.params.id)
+//display a movie
+app.get('/movies/:movie_id', async (req, res) => {
+    try {
+        let movie = await db.get(req.params.movie_id)
         console.log(movie)
         res.status(200).json(movie)
-    }
-   catch(err){
+    } catch (err) {
         res.status(404).end()
-   }
-
+    }
 })
 
-app.put('/movies/:id', async (req,res)=>{
-    await db.put(req.params.id,req.body)
+//update a movie
+app.put('/movies/:movie_id', async (req, res) => {
+    await db.put(req.params.movie_id, req.body)
     res.status(200).json(req.body)
 })
 
-app.delete('/movies/:id', async(req,res)=>{
-    await db.del(req.params.id)
+//delete a movie
+app.delete('/movies/:movie_id', async (req, res) => {
+    await db.del(req.params.movie_id)
     res.status(200).json("Suprimmé!!!!")
-} )
-
+})
 
 
 //routes des listes
-
-app.post('/listes',async(req,res)=>{
-    let filmListe=req.body
-    await db.put(filmListe.id,filmListe)
-    console.log(filmListe.id + filmListe)
+//ajoute une liste
+app.post('/listes', async (req, res) => {
+    let filmListe = req.body
+    await db.put(filmListe.id_list, filmListe)
+    console.log(filmListe.id_list + filmListe)
     res.status(200).json(filmListe)
 })
 
-app.get('/listes/:id', async (req,res)=>{
-    try{
-        let liste=await db.get(req.params.id)
+//display a list
+app.get('/listes/:list_id', async (req, res) => {
+    try {
+        let liste = await db.get(req.params.list_id)
         console.log(liste)
         res.status(200).json(liste)
-    }
-    catch(err){
+    } catch (err) {
         res.status(404).end()
     }
 })
 
-app.put('/listes/:id', async (req,res)=>{
-    await db.put(req.params.id,req.body)
+//update a list
+app.put('/listes/:list_id', async (req, res) => {
+    await db.put(req.params.list_id, req.body)
     res.status(200).json(req.body)
 })
 
-app.delete('/listes/:id', async(req,res)=>{
-    await db.del(req.params.id)
+//delete a list
+app.delete('/listes/:list_id', async (req, res) => {
+    await db.del(req.params.list_id)
     res.status(200).json("Suprimmé!!!!")
-} )
+})
 
-app.post('/listes/:id/add', async (req,res)=>{
-    try{
-        let liste=await db.get(req.params.id)
+// add a movie to a list
+app.post('/listes/:list_id/add', async (req, res) => {
+    try {
+        let liste = await db.get(req.params.list_id)
         liste.films.push(req.body.film_id)
-        db.put(req.params.id,liste)
+        db.put(req.params.list_id, liste)
         console.log(liste)
         res.status(200).json(liste)
-    }
-    catch(err){
+    } catch (err) {
         res.status(404).end()
     }
 })
 
-// app.post('/listes/:id/delete', async (req,res)=>{
-//     try{
-//         let liste=await db.get(req.params.id)
-//         let index=liste.films.indexOf(req.body.id)
-//         liste.films.splice(index,1)
-//         db.put(req.params.id,liste)
-//         console.log(liste)
-//         res.status(200).json(liste)
-//     }
-//     catch(err){
-//         res.status(404).end()
-//     }
-// })
-
-app.delete('/listes/:id/delete/:film_id', async (req,res)=>{
-    try{
-        let liste=await db.get(req.params.id)
-        let index=liste.films.indexOf(parseInt(req.params.film_id))
-        liste.films.splice(index,1)
-        db.put(req.params.id,liste)
+//delete a movie to a list
+app.delete('/listes/:list_id/delete/:film_id', async (req, res) => {
+    try {
+        let liste = await db.get(req.params.list_id)
+        let index = liste.films.indexOf(parseInt(req.params.film_id))
+        liste.films.splice(index, 1)
+        db.put(req.params.list_id, liste)
         console.log(liste)
         res.status(200).json(liste)
-    }
-    catch(err){
+    } catch (err) {
         res.status(404).end()
     }
 })
