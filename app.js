@@ -3,9 +3,11 @@ const app = express()
 const port = (parseInt(process.env.PORT || '3000', 10))
 const level = require('level')
 const db = level('./db', {valueEncoding: 'json'})
+const connectLivereload = require("connect-livereload");
 
 app.use(express.json())
 app.use(express.static('public'))
+app.use(connectLivereload());
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html')
@@ -64,8 +66,11 @@ app.delete('/movies/:movie_id', async (req, res) => {
 //ajoute une liste
 app.post('/listes', async (req, res) => {
     let filmListe = req.body
-    await db.put(filmListe.id_list, filmListe)
-    console.log(filmListe.id_list + filmListe)
+    if (filmListe.list_id===undefined){
+        res.status(400).json("Merci de renseigner un id")
+    }
+    await db.put(filmListe.list_id, filmListe)
+    console.log(filmListe.list_id + filmListe)
     res.status(200).json(filmListe)
 })
 
