@@ -102,10 +102,24 @@ app.post('/listes/:id/add', async (req,res)=>{
     }
 })
 
-app.post('/listes/:id/delete', async (req,res)=>{
+// app.post('/listes/:id/delete', async (req,res)=>{
+//     try{
+//         let liste=await db.get(req.params.id)
+//         let index=liste.films.indexOf(req.body.id)
+//         liste.films.splice(index,1)
+//         db.put(req.params.id,liste)
+//         console.log(liste)
+//         res.status(200).json(liste)
+//     }
+//     catch(err){
+//         res.status(404).end()
+//     }
+// })
+
+app.delete('/listes/:id/delete/:film_id', async (req,res)=>{
     try{
         let liste=await db.get(req.params.id)
-        let index=liste.films.indexOf(req.body.id)
+        let index=liste.films.indexOf(parseInt(req.params.film_id))
         liste.films.splice(index,1)
         db.put(req.params.id,liste)
         console.log(liste)
