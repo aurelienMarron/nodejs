@@ -28,7 +28,7 @@ app.listen(port, () => {
 //Ajouter un movie
 app.post('/movies', async (req, res) => {
     let objetFilm = req.body
-    if (req.body.movie_id===undefined){
+    if (objetFilm.movie_id===undefined){
         res.status(400).json("Merci de renseigner un id")
     }
     await db.put(objetFilm.movie_id, objetFilm)
