@@ -89,7 +89,7 @@ app.delete('/listes/:id', async(req,res)=>{
     res.status(200).json("Suprimmé!!!!")
 } )
 
-app.post('/listes/:id/films', async (req,res)=>{
+app.post('/listes/:id/add', async (req,res)=>{
     try{
         let liste=await db.get(req.params.id)
         liste.films.push(req.body.film_id)
@@ -102,10 +102,10 @@ app.post('/listes/:id/films', async (req,res)=>{
     }
 })
 
-app.delete('/listes/:id/films/:filmId', async (req,res)=>{
+app.post('/listes/:id/delete', async (req,res)=>{
     try{
         let liste=await db.get(req.params.id)
-        let index=liste.films.indexOf(req.params.filmId)
+        let index=liste.films.indexOf(req.body.id)
         liste.films.splice(index,1)
         db.put(req.params.id,liste)
         console.log(liste)
