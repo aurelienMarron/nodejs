@@ -2,7 +2,8 @@ const express = require('express')
 const app = express()
 const port = (parseInt(process.env.PORT || '3000', 10))
 const level = require('level')
-const db = level('./db', {valueEncoding: 'json'})
+const dbMovies = level('./db', {valueEncoding: 'json'})
+const dbLists=level('./dbLists', {valueEncoding: 'json'})
 const connectLivereload = require("connect-livereload");
 
 app.use(express.json())
@@ -33,7 +34,7 @@ app.post('/movies', async (req, res) => {
     if (objetFilm.movie_id===undefined){
         res.status(400).json("Merci de renseigner un id")
     }
-    await db.put(objetFilm.movie_id, objetFilm)
+    await dbMovies.put(objetFilm.movie_id, objetFilm)
     console.log(objetFilm.movie_id + objetFilm)
     res.status(200).json(objetFilm)
 })
@@ -41,7 +42,7 @@ app.post('/movies', async (req, res) => {
 //display a movie
 app.get('/movies/:movie_id', async (req, res) => {
     try {
-        let movie = await db.get(parseInt(req.params.movie_id))
+        let movie = await dbMovies.get(parseInt(req.params.movie_id))
         console.log(movie)
         res.status(200).json(movie)
     } catch (err) {
@@ -51,13 +52,13 @@ app.get('/movies/:movie_id', async (req, res) => {
 
 //update a movie
 app.put('/movies/:movie_id', async (req, res) => {
-    await db.put(req.params.movie_id, req.body)
+    await dbMovies.put(req.params.movie_id, req.body)
     res.status(200).json(req.body)
 })
 
 //delete a movie
 app.delete('/movies/:movie_id', async (req, res) => {
-    await db.del(req.params.movie_id)
+    await dbMovies.del(req.params.movie_id)
     res.status(200).json("Suprimmé!!!!")
 })
 
@@ -69,7 +70,7 @@ app.post('/listes', async (req, res) => {
     if (filmListe.list_id===undefined){
         res.status(400).json("Merci de renseigner un id")
     }
-    await db.put(filmListe.list_id, filmListe)
+    await dbLists.put(filmListe.list_id, filmListe)
     console.log(filmListe.list_id + filmListe)
     res.status(200).json(filmListe)
 })
@@ -77,7 +78,7 @@ app.post('/listes', async (req, res) => {
 //display a list
 app.get('/listes/:list_id', async (req, res) => {
     try {
-        let liste = await db.get(req.params.list_id)
+        let liste = await dbLists.get(req.params.list_id)
         console.log(liste)
         res.status(200).json(liste)
     } catch (err) {
@@ -87,22 +88,22 @@ app.get('/listes/:list_id', async (req, res) => {
 
 //update a list
 app.put('/listes/:list_id', async (req, res) => {
-    await db.put(req.params.list_id, req.body)
+    await dbLists.put(req.params.list_id, req.body)
     res.status(200).json(req.body)
 })
 
 //delete a list
 app.delete('/listes/:list_id', async (req, res) => {
-    await db.del(req.params.list_id)
+    await dbLists.del(req.params.list_id)
     res.status(200).json("Suprimmé!!!!")
 })
 
 // add a movie to a list
 app.post('/listes/:list_id/movies_list', async (req, res) => {
     try {
-        let liste = await db.get(req.params.list_id)
+        let liste = await dbLists.get(req.params.list_id)
         liste.films.push(req.body.film_id)
-        db.put(req.params.list_id, liste)
+        dbLists.put(req.params.list_id, liste)
         console.log(liste)
         res.status(200).json(liste)
     } catch (err) {
@@ -113,10 +114,10 @@ app.post('/listes/:list_id/movies_list', async (req, res) => {
 //delete a movie to a list
 app.delete('/listes/:list_id/movies_list/:film_id', async (req, res) => {
     try {
-        let liste = await db.get(req.params.list_id)
+        let liste = await dbLists.get(req.params.list_id)
         let index = liste.films.indexOf(parseInt(req.params.film_id))
         liste.films.splice(index, 1)
-        db.put(req.params.list_id, liste)
+        dbLists.put(req.params.list_id, liste)
         console.log(liste)
         res.status(200).json(liste)
     } catch (err) {
