@@ -3,7 +3,7 @@ const app = express()
 const port = (parseInt(process.env.PORT || '3000', 10))
 const level = require('level')
 const dbMovies = level('./db', {valueEncoding: 'json'})
-const dbLists=level('./dbLists', {valueEncoding: 'json'})
+const dbLists = level('./dbLists', {valueEncoding: 'json'})
 const connectLivereload = require("connect-livereload");
 
 app.use(express.json())
@@ -31,12 +31,17 @@ app.listen(port, () => {
 //Ajouter un movie
 app.post('/movies', async (req, res) => {
     let objetFilm = req.body
-    if (objetFilm.movie_id===undefined){
-        res.status(400).json("Merci de renseigner un id")
+    if (objetFilm.movie_id === undefined) {
+        res.status(400).json("Merci de renseigner un id").end()
+    } else if (Number.isInteger(objetFilm.movie_id) === false) {
+        res.status(400).json("Merci de saisir un entier comme id").end()
+    } else if (typeof (dbMovies.get(objetFilm.movie_id)) !== undefined) {
+        res.status(400).json("cette id est deja utilisé").end()
+    } else {
+        await dbMovies.put(objetFilm.movie_id, objetFilm)
+        console.log(objetFilm.movie_id + objetFilm)
+        res.status(200).json(objetFilm)
     }
-    await dbMovies.put(objetFilm.movie_id, objetFilm)
-    console.log(objetFilm.movie_id + objetFilm)
-    res.status(200).json(objetFilm)
 })
 
 //display a movie
@@ -52,6 +57,9 @@ app.get('/movies/:movie_id', async (req, res) => {
 
 //update a movie
 app.put('/movies/:movie_id', async (req, res) => {
+    if (parseInt(req.params.movie_id) !== parseInt(req.body.movie_id)) {
+        res.status(400).json("l'id ne peut être modifié")
+    }
     await dbMovies.put(req.params.movie_id, req.body)
     res.status(200).json(req.body)
 })
@@ -67,12 +75,17 @@ app.delete('/movies/:movie_id', async (req, res) => {
 //ajoute une liste
 app.post('/listes', async (req, res) => {
     let filmListe = req.body
-    if (filmListe.list_id===undefined){
+    if (filmListe.list_id === undefined) {
         res.status(400).json("Merci de renseigner un id")
+    } else if (typeof (dbLists.get(filmListe.list_id)) !== undefined) {
+        res.status(400).json("cette id est deja utilisé")
+    } else if (Number.isInteger(filmListe.list_id) === false) {
+        res.status(400).json("Merci de saisir un entier comme id").end()
+    } else {
+        await dbLists.put(filmListe.list_id, filmListe)
+        console.log(filmListe.list_id + filmListe)
+        res.status(200).json(filmListe)
     }
-    await dbLists.put(filmListe.list_id, filmListe)
-    console.log(filmListe.list_id + filmListe)
-    res.status(200).json(filmListe)
 })
 
 //display a list
@@ -88,8 +101,12 @@ app.get('/listes/:list_id', async (req, res) => {
 
 //update a list
 app.put('/listes/:list_id', async (req, res) => {
-    await dbLists.put(req.params.list_id, req.body)
-    res.status(200).json(req.body)
+    if (parseInt(req.params.list_id) !== parseInt(req.body.list_id)) {
+        res.status(400).json("l'id ne peut être modifié")
+    }else {
+        await dbLists.put(req.params.list_id, req.body)
+        res.status(200).json(req.body)
+    }
 })
 
 //delete a list
