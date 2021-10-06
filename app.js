@@ -9,6 +9,10 @@ const connectLivereload = require("connect-livereload");
 app.use(express.json())
 app.use(express.static('public'))
 app.use(connectLivereload());
+app.use(function(request, response, next) {
+    response.header("Access-Control-Allow-Origin", "*");
+    next();
+});
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html')
