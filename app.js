@@ -11,7 +11,12 @@ app.use(express.static('public'))
 app.use(connectLivereload());
 app.use(function(request, response, next) {
     response.header("Access-Control-Allow-Origin", "*");
+    response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
     next();
+});
+app.options('/api/*', function (request, response) {
+    response.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS");
+    response.send();
 });
 
 app.get('/', (req, res) => {
