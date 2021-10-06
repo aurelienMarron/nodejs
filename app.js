@@ -35,8 +35,8 @@ app.post('/movies', async (req, res) => {
         res.status(400).json("Merci de renseigner un id").end()
     } else if (Number.isInteger(objetFilm.movie_id) === false) {
         res.status(400).json("Merci de saisir un entier comme id").end()
-    } else if (typeof (dbMovies.get(objetFilm.movie_id)) !== undefined) {
-        res.status(400).json("cette id est deja utilisé").end()
+        // } else if (typeof (dbMovies.get(objetFilm.movie_id)) !== undefined) {
+        //     res.status(400).json("cette id est deja utilisé").end()
     } else {
         await dbMovies.put(objetFilm.movie_id, objetFilm)
         console.log(objetFilm.movie_id + objetFilm)
@@ -74,13 +74,22 @@ app.delete('/movies/:movie_id', async (req, res) => {
 //routes des listes
 //ajoute une liste
 app.post('/listes', async (req, res) => {
-    let filmListe = req.body
+    // let filmListe = req.body
+    // let test=dbLists.get(filmListe.list_id,function(err,value){
+    //     if(err){
+    //         return "undefined"
+    //     }else {
+    //         return "object"
+    //     }
+    // })
     if (filmListe.list_id === undefined) {
-        res.status(400).json("Merci de renseigner un id")
-    } else if (typeof (dbLists.get(filmListe.list_id)) !== undefined) {
-        res.status(400).json("cette id est deja utilisé")
+        res.status(400).json("Merci de renseigner un id").end()
+    // } else if ( test === 'object') {
+    //     res.status(400).json("cet id est deja utilisé").end()
     } else if (Number.isInteger(filmListe.list_id) === false) {
         res.status(400).json("Merci de saisir un entier comme id").end()
+    } else if (Array.isArray(req.body.moviesList) === false) {
+        res.status(400).json("La liste doit être dans un tableau").end()
     } else {
         await dbLists.put(filmListe.list_id, filmListe)
         console.log(filmListe.list_id + filmListe)
@@ -102,8 +111,8 @@ app.get('/listes/:list_id', async (req, res) => {
 //update a list
 app.put('/listes/:list_id', async (req, res) => {
     if (parseInt(req.params.list_id) !== parseInt(req.body.list_id)) {
-        res.status(400).json("l'id ne peut être modifié")
-    }else {
+        res.status(400).json("l'id ne peut être modifié").end()
+    } else {
         await dbLists.put(req.params.list_id, req.body)
         res.status(200).json(req.body)
     }
