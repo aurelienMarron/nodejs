@@ -9,15 +9,17 @@ const connectLivereload = require("connect-livereload");
 app.use(express.json())
 app.use(express.static('public'))
 app.use(connectLivereload());
-app.use(function(request, response, next) {
-    response.header("Access-Control-Allow-Origin", "*");
-    response.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+app.use(function(req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header('Access-Control-Allow-Credentials','true')
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Methods", 'GET, POST, OPTIONS, PUT, DELETE');
     next();
 });
-app.options('/api/*', function (request, response) {
-    response.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS");
-    response.send();
-});
+// app.options('/api/*', function (req, res) {
+//     res.header("Access-Control-Allow-Methods", "GET, PUT, POST, DELETE, OPTIONS");
+//     res.send();
+// });
 
 app.get('/', (req, res) => {
     res.sendFile(__dirname + '/index.html')
