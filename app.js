@@ -10,7 +10,7 @@ app.use(express.json())
 app.use(express.static('public'))
 app.use(connectLivereload());
 app.use(function(req, res, next) {
-    res.setHeader("Access-Control-Allow-Origin", "http://localhost:8080/");
+    res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
@@ -82,7 +82,7 @@ app.delete('/movies/:movie_id', async (req, res) => {
 //routes des listes
 //ajoute une liste
 app.post('/listes', async (req, res) => {
-    // let filmListe = req.body
+    let filmListe = req.body
     // let test=dbLists.get(filmListe.list_id,function(err,value){
     //     if(err){
     //         return "undefined"
@@ -102,6 +102,19 @@ app.post('/listes', async (req, res) => {
         await dbLists.put(filmListe.list_id, filmListe)
         console.log(filmListe.list_id + filmListe)
         res.status(200).json(filmListe)
+    }
+})
+
+//display all listes
+app.get('/listes',async(req,res)=>{
+    try {
+        let list=[];
+        for await(const[key,value]of dbLists.iterator()){
+            list.push(value)
+        }
+        res.status(200).json(list)
+    } catch (err) {
+        res.status(404).end()
     }
 })
 
