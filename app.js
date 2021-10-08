@@ -10,7 +10,7 @@ app.use(express.json())
 app.use(express.static('public'))
 app.use(connectLivereload());
 app.use(function(req, res, next) {
-    res.setHeader("Access-Control-Allow-Origin", "https://aurel-node-movies.herokuapp.com/");
+    res.setHeader("Access-Control-Allow-Origin", "http://localhost:8080/");
     res.setHeader('Access-Control-Allow-Credentials', 'true');
     res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
